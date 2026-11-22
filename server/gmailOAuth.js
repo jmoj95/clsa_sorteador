@@ -84,7 +84,11 @@ export function createGmailOAuth(options = {}) {
       return oauthClient.generateAuthUrl({
         access_type: "offline",
         prompt: "consent",
-        scope: ["https://www.googleapis.com/auth/gmail.send"],
+        scope: [
+          "openid",
+          "email",
+          "https://www.googleapis.com/auth/gmail.send",
+        ],
         state,
       });
     },
@@ -96,6 +100,15 @@ export function createGmailOAuth(options = {}) {
         throw new Error(
           "O Google não retornou um refresh token. Revogue o acesso anterior e tente novamente.",
         );
+      }
+
+      oauthClient.setCredentials(tokens);
+      const oauth2 = google.oauth2({ version: "v2", auth: oauthClient });
+      const identity = await oauth2.userinfo.get();
+      const authorizedEmail = String(identity.data.email || "").trim().toLower();
+      const expectedEmail = String(process.env.GMAIL_USER || "").trim().toLower();
+      if (expectedEmail && authorizedEmail !== expectedEmail) {
+        throw new Error(`Conecte a conta ${expectedEmail} no Google.`);
       }
 
       fs.mkdirSync(path.dirname(tokenFile), { recursive: true });
