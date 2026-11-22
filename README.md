@@ -95,6 +95,17 @@ Também é possível enviar magic links pelo Gmail sem senha SMTP:
 4. Entre com um criador autorizado e use **Conectar Gmail** no modal da conta.
 5. Autorize a conta; o refresh token será salvo em `data/gmail-token.json`, que é ignorado pelo Git.
 
+### Render persistence
+
+No Render, monte um Persistent Disk em `/var/data` e configure:
+
+```text
+GMAIL_TOKEN_FILE=/var/data/gmail-token.json
+DATA_DIRECTORY=/var/data
+```
+
+Isso evita perder o token OAuth e o banco SQLite durante reinicializações ou redeploys.
+
 Antes de publicar em produção, crie as variáveis SMTP e `APP_URL` no provedor de hospedagem. Use [`.env.example`](/D:/Projects/clsa_sorteador/.env.example) como referência e não envie credenciais ao repositório.
 
 ## Testes

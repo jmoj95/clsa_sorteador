@@ -4,7 +4,8 @@ import { google } from "googleapis";
 
 export function createGmailOAuth(options = {}) {
   const projectRoot = options.projectRoot;
-  const tokenFile = path.join(projectRoot, "data", "gmail-token.json");
+  const tokenFile = process.env.GMAIL_TOKEN_FILE ||
+    path.join(projectRoot, "data", "gmail-token.json");
 
   function readClientJson() {
     const filePath =

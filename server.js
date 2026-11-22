@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { createDatabase } from "./server/database.js";
@@ -13,7 +14,10 @@ const port = Number(process.env.PORT || 3001);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appUrl = process.env.APP_URL || `http://localhost:${port}`;
 
-const database = createDatabase(path.join(__dirname, "data", "raffles.sqlite"));
+const dataDirectory = process.env.DATA_DIRECTORY ||
+  path.join(__dirname, "data");
+fs.mkdirSync(dataDirectory, { recursive: true });
+const database = createDatabase(path.join(dataDirectory, "raffles.sqlite"));
 const authStore = createAuthStore(database);
 const raffleStore = createRaffleStore(database);
 const gmailOAuth = createGmailOAuth({ projectRoot: __dirname, appUrl });
