@@ -1,23 +1,37 @@
+import "dotenv/config";
 import express from "express";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { createCandidatesRouter } from "./server/routes/candidates.js";
-import { createShuffleRouter } from "./server/routes/shuffle.js";
-import { ensureRuntimeFiles } from "./server/fileStore.js";
+import { createDatabase } from "./server/database.js";
+import { createAuthStore } from "./server/authStore.js";
+import { createRaffleStore } from "./server/raffleStore.js";
+import { createAuthRoutes } from "./server/routes/authRoutes.js";
+import { createRaffleRoutes } from "./server/routes/raffleRoutes.js";
+import { createGmailOAuth } from "./server/gmailOAuth.js";
 
 const port = Number(process.env.PORT || 3001);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const inputFile = path.join(__dirname, "input.txt");
-const outputFile = path.join(__dirname, "output.txt");
+const appUrl = process.env.APP_URL || `http://localhost:${port}`;
 
-ensureRuntimeFiles(inputFile, outputFile);
+const database = createDatabase(path.join(__dirname, "data", "raffles.sqlite"));
+const authStore = createAuthStore(database);
+const raffleStore = createRaffleStore(database);
+const gmailOAuth = createGmailOAuth({ projectRoot: __dirname, appUrl });
 
 const app = express();
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "dist")));
-app.use("/api/candidates", createCandidatesRouter({ inputFile, outputFile }));
-app.use("/api/shuffle", createShuffleRouter({ inputFile, outputFile }));
+app.use("/api/auth", createAuthRoutes({ authStore, appUrl, gmailOAuth }));
+app.use("/api/raffles", createRaffleRoutes({ database, authStore, raffleStore }));
+
+app.use((request, response, next) => {
+  if (request.method !== "GET" || !request.accepts("html")) {
+    next();
+    return;
+  }
+  response.sendFile(path.join(__dirname, "dist", "index.html"));
+});
 
 app.listen(port, () => {
-  console.log(`Sorteador rodando em http://localhost:${port}`);
+  console.log(`CLSA Sorteador rodando em http://localhost:${port}`);
 });
