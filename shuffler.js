@@ -1,40 +1,57 @@
 import fs from "node:fs";
+import path from "node:path";
 import { randomInt } from "node:crypto";
+import { pathToFileURL } from "node:url";
 
-/**
- * Shuffles an array and returns a new shuffled array.
- * @param {Array} array - The original array to shuffle.
- * @returns {Array} A new array with elements in random order.
- */
-function shuffleArray(array) {
-  const newArray = [...array];
+export function shuffleArray(array) {
+  const shuffled = [...array];
 
-  // Fisher-Yates Shuffle Algorithm
-  for (let i = newArray.length - 1; i > 0; i--) {
-    const j = randomInt(0, i + 1);
-    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  for (let index = shuffled.length - 1; index > 0; index -= 1) {
+    const randomIndex = randomInt(0, index + 1);
+    [shuffled[index], shuffled[randomIndex]] = [
+      shuffled[randomIndex],
+      shuffled[index],
+    ];
   }
 
-  return newArray;
+  return shuffled;
 }
 
-const inputFile = process.argv[2] || "input.txt";
-const outputFile = process.argv[3] || "output.txt";
-
-if (!fs.existsSync(inputFile)) {
-  fs.writeFileSync(inputFile, "");
-}
-
-let lines;
-try {
-  lines = fs
-    .readFileSync(inputFile, "utf8")
+export function readNames(filePath) {
+  return fs
+    .readFileSync(filePath, "utf8")
     .split(/\r?\n/)
-    .filter(l => l.trim());
-} catch {
-  console.error(`Cannot read ${inputFile}`);
-  process.exit(1);
+    .map((name) => name.trim())
+    .filter(Boolean);
 }
 
-const shuffled = shuffleArray(lines);
-fs.writeFileSync(outputFile, shuffled.join("\n") + "\n");
+export function writeNames(filePath, names) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, names.length ? `${names.join("\n")}\n` : "");
+}
+
+export function shuffleFile(inputFile, outputFile) {
+  if (!fs.existsSync(inputFile)) {
+    writeNames(inputFile, []);
+  }
+
+  const shuffled = shuffleArray(readNames(inputFile));
+  writeNames(outputFile, shuffled);
+  return shuffled;
+}
+
+const isDirectRun =
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href;
+
+if (isDirectRun) {
+  const inputFile = process.argv[2] || "input.txt";
+  const outputFile = process.argv[3] || "output.txt";
+
+  try {
+    shuffleFile(inputFile, outputFile);
+  } catch (error) {
+    console.error(`Cannot shuffle ${inputFile}: ${error.message}`);
+    process.exitCode = 1;
+  }
+}
