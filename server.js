@@ -14,9 +14,20 @@ const port = Number(process.env.PORT || 3001);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const appUrl = process.env.APP_URL || `http://localhost:${port}`;
 
-const dataDirectory = process.env.DATA_DIRECTORY ||
+const configuredDataDirectory = process.env.DATA_DIRECTORY;
+let dataDirectory = configuredDataDirectory ||
   path.join(__dirname, "data");
-fs.mkdirSync(dataDirectory, { recursive: true });
+
+try {
+  fs.mkdirSync(dataDirectory, { recursive: true });
+  fs.accessSync(dataDirectory, fs.constants.W_OK);
+} catch (error) {
+  console.warn(
+    `Cannot write to configured data directory "${dataDirectory}". Using temporary storage.`,
+  );
+  dataDirectory = path.join(process.env.TMPDIR || "/tmp", "clsa-sorteador");
+  fs.mkdirSync(dataDirectory, { recursive: true });
+}
 const database = createDatabase(path.join(dataDirectory, "raffles.sqlite"));
 const authStore = createAuthStore(database);
 const raffleStore = createRaffleStore(database);
