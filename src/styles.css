@@ -150,6 +150,38 @@ body {
   text-transform: uppercase;
 }
 
+.candidate-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.candidate-actions .clear-candidates {
+  min-width: auto;
+  width: auto;
+  height: 34px;
+  border: 1px solid rgba(154, 64, 53, 0.18);
+  border-radius: 999px;
+  padding: 0 12px;
+  background: transparent;
+  color: #9a4035;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.candidate-actions .clear-candidates:hover:not(:disabled) {
+  background: #f3dcd7;
+  transform: none;
+}
+
+.candidate-actions .clear-candidates:disabled {
+  border-color: rgba(22, 35, 29, 0.08);
+  color: #a8afa9;
+  opacity: 0.65;
+  cursor: default;
+}
+
 .candidate-list,
 .remaining ol {
   margin: 0;

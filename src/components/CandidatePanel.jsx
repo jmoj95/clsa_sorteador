@@ -21,6 +21,11 @@ export function CandidatePanel({ candidates, saveCandidates, setError }) {
     saveCandidates(candidates.filter((candidate) => candidate !== name));
   }
 
+  function clearCandidates() {
+    if (candidates.length === 0) return;
+    saveCandidates([]);
+  }
+
   return (
     <article className="panel candidates-panel">
       <header className="panel-header">
@@ -28,7 +33,17 @@ export function CandidatePanel({ candidates, saveCandidates, setError }) {
           <p className="panel-kicker">Lista atual</p>
           <h2>Candidatos</h2>
         </div>
-        <span className="count">{candidates.length}</span>
+        <div className="candidate-actions">
+          <button
+            type="button"
+            className="clear-candidates"
+            onClick={clearCandidates}
+            disabled={candidates.length === 0}
+          >
+            Limpar lista
+          </button>
+          <span className="count">{candidates.length}</span>
+        </div>
       </header>
 
       <form className="add-candidate" onSubmit={addCandidate}>
