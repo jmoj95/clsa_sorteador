@@ -1,47 +1,113 @@
+import { useEffect, useState } from "react";
+import { AuthPanel } from "./components/AuthPanel.jsx";
 import { BrandHeader } from "./components/BrandHeader.jsx";
-import { CandidatePanel } from "./components/CandidatePanel.jsx";
-import { ResultsPanel } from "./components/ResultsPanel.jsx";
-import { useCandidates } from "./hooks/useCandidates.js";
-import { useShuffleAnimation } from "./hooks/useShuffleAnimation.js";
+import { RaffleDetail } from "./components/RaffleDetail.jsx";
+import { RaffleList } from "./components/RaffleList.jsx";
+import {
+  createRaffle,
+  getRaffles,
+  getSession,
+  logout,
+  requestMagicLink,
+} from "./services/raffleApi.js";
+
+function getRaffleIdFromHash() {
+  const match = window.location.hash.match(/^#\/raffle\/([^/?#]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 export function App() {
-  const candidateState = useCandidates();
-  const shuffleState = useShuffleAnimation(candidateState.candidates);
-  const error = candidateState.error || shuffleState.error;
+  const [user, setUser] = useState(null);
+  const [raffles, setRaffles] = useState([]);
+  const [raffleId, setRaffleId] = useState(getRaffleIdFromHash());
+  const [authOpen, setAuthOpen] = useState(false);
+  const [error, setError] = useState("");
+
+  async function refresh() {
+    const [session, raffleList] = await Promise.all([getSession(), getRaffles()]);
+    setUser(session.user);
+    setRaffles(raffleList.raffles);
+  }
+
+  useEffect(() => {
+    refresh().catch((requestError) => setError(requestError.message));
+
+    const refreshInterval = window.setInterval(() => {
+      refresh().catch((requestError) => setError(requestError.message));
+    }, 2000);
+
+    function handleHashChange() {
+      setRaffleId(getRaffleIdFromHash());
+    }
+
+    window.addEventListener("hashchange", handleHashChange);
+    return () => {
+      window.clearInterval(refreshInterval);
+      window.removeEventListener("hashchange", handleHashChange);
+    };
+  }, []);
+
+  function openRaffle(id) {
+    window.location.hash = `/raffle/${id}`;
+  }
+
+  async function createNewRaffle(title) {
+    try {
+      const data = await createRaffle(title);
+      await refresh();
+      openRaffle(data.raffle.id);
+      setError("");
+    } catch (requestError) {
+      setError(requestError.message);
+    }
+  }
+
+  async function requestLogin(email) {
+    return requestMagicLink(email);
+  }
+
+  async function logoutUser() {
+    await logout();
+    await refresh();
+    setAuthOpen(false);
+  }
 
   return (
     <main className="page">
-      <BrandHeader loading={shuffleState.loading} results={shuffleState.results} />
+      <header className="app-header">
+        <BrandHeader />
+        <button type="button" className="login-button" onClick={() => setAuthOpen(true)}>
+          {user ? user.email : "Entrar"}
+        </button>
+      </header>
 
-      <section className="hero">
-        <p className="eyebrow">Resultado oficial</p>
-        <h1>Sorteio</h1>
-      </section>
-
-      <section className="grid">
-        <CandidatePanel
-          candidates={candidateState.candidates}
-          saveCandidates={candidateState.saveCandidates}
-          setError={candidateState.setError}
+      {raffleId ? (
+        <RaffleDetail
+          raffleId={raffleId}
+          onBack={() => {
+            window.location.hash = "";
+            refresh();
+          }}
+          onError={setError}
         />
-        <ResultsPanel
-          results={shuffleState.results}
-          rollingName={shuffleState.rollingName}
+      ) : (
+        <RaffleList
+          raffles={raffles}
+          user={user}
+          onOpen={openRaffle}
+          onCreate={createNewRaffle}
         />
-      </section>
+      )}
 
       {error && <div className="error">{error}</div>}
 
-      <footer>
-        <button
-          type="button"
-          onClick={shuffleState.runShuffle}
-          disabled={shuffleState.loading || candidateState.candidates.length === 0}
-        >
-          <span>{shuffleState.loading ? "Sorteando..." : "Realizar sorteio"}</span>
-          <span className="arrow">→</span>
-        </button>
-      </footer>
+      <AuthPanel
+        open={authOpen}
+        user={user}
+        onClose={() => setAuthOpen(false)}
+        onLoginRequested={requestLogin}
+        onLogout={logoutUser}
+      />
     </main>
   );
 }

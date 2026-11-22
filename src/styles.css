@@ -25,6 +25,301 @@ body {
   padding: 0 5vw 32px;
 }
 
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(22, 35, 29, 0.12);
+}
+
+.app-header .topbar {
+  flex: 1;
+  border-bottom: 0;
+}
+
+.login-button {
+  min-width: auto;
+  width: auto;
+  height: 36px;
+  margin-left: 16px;
+  border: 1px solid rgba(22, 35, 29, 0.12);
+  border-radius: 999px;
+  padding: 0 14px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #16231d;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.login-button:hover {
+  background: white;
+  transform: none;
+}
+
+.raffle-list-page,
+.raffle-detail {
+  flex: 1;
+  padding-top: 42px;
+}
+
+.raffle-list-heading,
+.raffle-detail-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+
+.raffle-list-heading h1,
+.raffle-detail-heading h1 {
+  margin: 0;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+}
+
+.create-raffle {
+  display: flex;
+  gap: 8px;
+}
+
+.create-raffle input {
+  height: 44px;
+  border: 1px solid rgba(22, 35, 29, 0.12);
+  border-radius: 10px;
+  padding: 0 12px;
+  background: white;
+  color: #16231d;
+  font: inherit;
+}
+
+.create-raffle button,
+.secondary-button,
+.close-raffle {
+  min-width: auto;
+  width: auto;
+  height: 44px;
+  border-radius: 10px;
+  padding: 0 14px;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.delete-raffle {
+  min-width: auto;
+  width: auto;
+  height: 44px;
+  border: 1px solid rgba(154, 64, 53, 0.18);
+  border-radius: 10px;
+  padding: 0 14px;
+  background: transparent;
+  color: #9a4035;
+  font-size: 12px;
+  box-shadow: none;
+}
+
+.delete-raffle:hover:not(:disabled) {
+  background: #f3dcd7;
+  transform: none;
+}
+
+.raffle-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.raffle-card {
+  min-width: 0;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  border: 1px solid rgba(22, 35, 29, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.62);
+  color: #16231d;
+  text-align: left;
+  box-shadow: 0 18px 50px rgba(45, 55, 47, 0.05);
+}
+
+.raffle-card p {
+  margin: 0 0 8px;
+  color: #718072;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.raffle-card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.raffle-card span {
+  color: #718072;
+  font-size: 12px;
+}
+
+.empty-raffles {
+  min-height: 260px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(22, 35, 29, 0.08);
+  border-radius: 16px;
+  color: #718072;
+  text-align: center;
+}
+
+.empty-raffles p {
+  margin: 0 0 6px;
+  color: #445248;
+  font-weight: 800;
+}
+
+.empty-raffles span {
+  font-size: 13px;
+}
+
+.back-button {
+  min-width: auto;
+  width: auto;
+  height: 36px;
+  margin-bottom: 18px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #718072;
+  box-shadow: none;
+}
+
+.back-button:hover {
+  background: transparent;
+  color: #16231d;
+  transform: none;
+}
+
+.creator-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.toggle-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.raffle-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.82fr) minmax(380px, 1.18fr);
+  gap: 18px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(22, 35, 29, 0.38);
+  backdrop-filter: blur(8px);
+}
+
+.auth-modal {
+  position: relative;
+  width: min(420px, 100%);
+  border: 1px solid rgba(22, 35, 29, 0.1);
+  border-radius: 18px;
+  padding: 28px;
+  background: #f7f5ed;
+  box-shadow: 0 24px 80px rgba(22, 35, 29, 0.22);
+}
+
+.auth-modal h2 {
+  margin: 0 0 18px;
+  font-size: 26px;
+}
+
+.modal-close {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  min-width: 32px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1;
+  border-radius: 50%;
+  padding: 0;
+  background: transparent;
+  color: #718072;
+  box-shadow: none;
+}
+
+.auth-form {
+  display: grid;
+  gap: 10px;
+}
+
+.auth-form input {
+  height: 44px;
+  border: 1px solid rgba(22, 35, 29, 0.12);
+  border-radius: 10px;
+  padding: 0 12px;
+  font: inherit;
+}
+
+.auth-form button {
+  min-width: 0;
+  width: 100%;
+  height: 44px;
+  border-radius: 10px;
+  padding: 0 14px;
+  box-shadow: none;
+}
+
+.auth-message,
+.auth-link {
+  margin-top: 12px;
+  color: #718072;
+  font-size: 13px;
+}
+
+.gmail-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+  color: #718072;
+  font-size: 13px;
+}
+
+.gmail-connect {
+  color: #355126;
+  font-weight: 800;
+}
+
+.auth-link a {
+  color: #355126;
+  font-weight: 800;
+}
+
 .topbar {
   height: 72px;
   display: flex;
