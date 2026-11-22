@@ -10,6 +10,7 @@ Aplicativo web em React para sortear candidatos a partir de uma lista em um arqu
 - Lista os candidatos carregados de `input.txt`.
 - Atualiza a lista automaticamente quando o arquivo é alterado.
 - Permite adicionar e remover candidatos pela interface.
+- Permite limpar toda a lista de candidatos para iniciar um novo sorteio.
 - Executa `shuffler.js` para embaralhar os candidatos.
 - Exibe o vencedor, o segundo e o terceiro lugares.
 - Lista os demais candidatos na ordem sorteada.
