@@ -52,9 +52,23 @@ http://localhost:5173
 - `output.txt`: resultado embaralhado produzido pelo sorteio. É criado automaticamente.
 - `input.example.txt`: exemplo da lista de candidatos para novos ambientes.
 - `shuffler.js`: script Node.js responsável por embaralhar a lista.
-- `server.js`: API Express usada pelo frontend.
-- `src/main.jsx`: interface React.
+- `server.js`: inicialização do servidor Express.
+- `server/fileStore.js`: leitura e escrita dos arquivos de candidatos.
+- `server/routes/`: rotas da API de candidatos e sorteio.
+- `src/App.jsx`: composição principal da interface React.
+- `src/components/`: componentes visuais da aplicação.
+- `src/hooks/`: estado de candidatos e animação do sorteio.
+- `src/services/`: comunicação do frontend com a API.
+- `test/`: testes automatizados da lógica de sorteio.
 - `src/styles.css`: estilos da aplicação.
+
+## Testes
+
+Execute os testes do embaralhamento com:
+
+```bash
+npm test
+```
 
 ## Como funciona o sorteio
 
