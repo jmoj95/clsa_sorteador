@@ -19,6 +19,7 @@ export function createAuthRoutes({ authStore, appUrl, gmailOAuth }) {
         ? {
             email: user.email,
             canCreateRaffles: authStore.canCreateRaffles(user.email),
+            isAdmin: authStore.isAdmin(user.email),
           }
         : null,
     });
@@ -30,8 +31,14 @@ export function createAuthRoutes({ authStore, appUrl, gmailOAuth }) {
 
   router.get("/gmail/authorize", (request, response) => {
     const user = getSession(request);
-    if (!user || !authStore.canCreateRaffles(user.email)) {
-      response.status(403).send("Somente criadores autorizados podem conectar o Gmail.");
+    const gmailStatus = gmailOAuth.getStatus();
+    if (gmailStatus.connected) {
+      if (!user || !authStore.isAdmin(user.email)) {
+        response.status(403).send("Somente administradores autorizados podem reconectar o Gmail.");
+        return;
+      }
+    } else if (gmailStatus.configured && user && !authStore.isAdmin(user.email)) {
+      response.status(403).send("Somente administradores autorizados podem conectar o Gmail.");
       return;
     }
 

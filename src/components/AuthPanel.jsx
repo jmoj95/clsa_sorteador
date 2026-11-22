@@ -61,7 +61,7 @@ export function AuthPanel({ open, user, onClose, onLoginRequested, onLogout }) {
                       ? "não autorizado"
                       : "não configurado"}
                 </span>
-                {!gmailStatus.connected && gmailStatus.configured && (
+                {!gmailStatus.connected && gmailStatus.configured && user.isAdmin && (
                   <a className="gmail-connect" href="/api/auth/gmail/authorize">
                     Conectar Gmail
                   </a>
